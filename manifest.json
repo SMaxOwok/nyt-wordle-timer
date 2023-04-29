@@ -4,7 +4,25 @@
   "name": "Wordle Timer",
   "description": "See how quickly you solve the daily World puzzle",
   "action": {
-      "default_popup": "js/index.html",
-      "default_title": "Wordle Timer"
-  }
+    "default_popup": "js/index.html",
+    "default_title": "Wordle Timer"
+  },
+  "content_scripts": [{
+    "matches": ["*://*.nytimes.com/games/wordle/*"],
+    "run_at": "document_start",
+    "js": ["content.js", "inject.js"]
+  }],
+  "web_accessible_resources": [{
+    "resources": ["injected.js"],
+    "matches": ["<all_urls>"]
+  }],
+  "host_permissions": [
+    "*://*.nytimes.com/games/wordle/*"
+  ],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "scripting"
+  ]
 }
