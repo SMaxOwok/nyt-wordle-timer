@@ -20,8 +20,10 @@ const WORDLE_ENDPOINT = "https://www.nytimes.com/svc/wordle/v2";
       if (!url.startsWith(WORDLE_ENDPOINT)) return;
 
       try {
-        console.log(url);
-        console.log(JSON.parse(this.responseText));
+        window.postMessage({
+          type: "SET_WORDLE_TIMER_DATA",
+          ...JSON.parse(this.responseText),
+        });
       } catch (err) {
         console.log("Error in responseType try catch");
         console.log(err);
