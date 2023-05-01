@@ -1,6 +1,6 @@
 /* global chrome */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import './App.css';
 
@@ -19,6 +19,8 @@ const getSeconds = (seconds: number) =>
 
 export default function App() {
   const [secondsElapsed, setSecondsElapsed] = useState(0);
+  const timer = useRef<NodeJS.Timer | null>(null);
+  const [isSolved, setIsSolved] = useState(false);
 
   useEffect(() => {
     chrome.storage.sync.get(function (result) {
@@ -26,6 +28,10 @@ export default function App() {
       const endDate = result['wt-end']
         ? new Date(result['wt-end'])
         : new Date();
+
+      if (result['wt-end']) {
+        setIsSolved(true);
+      }
 
       setSecondsElapsed(
         Math.abs(endDate.valueOf() - startDate.valueOf()) / 1000,
@@ -38,11 +44,19 @@ export default function App() {
       setSecondsElapsed((previous) => previous + 1);
     }, 1000);
 
-    return () => clearInterval(interval);
+    timer.current = interval;
+
+    return () => clearInterval(timer.current as NodeJS.Timer);
   }, [setSecondsElapsed]);
 
+  useEffect(() => {
+    if (!isSolved) return;
+
+    clearInterval(timer.current as NodeJS.Timer);
+  }, [isSolved]);
+
   return (
-    <div className="App">
+    <div className={`App ${isSolved ? 'App--solved' : null}`}>
       <div className="App__section">
         <div className="App__tile">{getHours(secondsElapsed)}</div>
 

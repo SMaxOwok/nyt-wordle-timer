@@ -23,3 +23,9 @@
 .App__label {
   font-size: 1rem;
 }
+
+.App--solved .App__tile {
+  color: #fff;
+  background-color: #538d4e;
+  border: none;
+}
