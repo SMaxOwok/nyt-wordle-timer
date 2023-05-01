@@ -19,6 +19,8 @@ window.addEventListener(
             "wt-id": id,
             "wt-number": days_since_launch,
             "wt-date": print_date,
+            "wt-start": new Date().toLocaleString(),
+            "wt-end": null,
           });
         });
 

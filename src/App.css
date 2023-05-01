@@ -1,10 +1,25 @@
+#root {
+  height: 4.5rem;
+  width: 17rem;
+  padding: 5px;
+}
+
 .App {
-  color: white;
+  font-size: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 5px;
   text-align: center;
 }
 
-#root {
-  width: 15rem;
-  height: 15rem;
-  background-color: green;
+.App__tile {
+  border: 2px solid #878a8c;
+}
+
+.App__tile + .App__tile {
+  margin-left: 4px;
+}
+
+.App__label {
+  font-size: 1rem;
 }
