@@ -17,13 +17,24 @@ const getSeconds = (seconds: number) =>
     .toString()
     .padStart(2, '0');
 
+interface StorageObject {
+  'wt-id': number;
+  'wt-number': number;
+  'wt-start': string;
+  'wt-end': string;
+  'wt-date': string;
+}
+
 export default function App() {
+  const [data, setData] = useState<StorageObject>({} as StorageObject);
   const [secondsElapsed, setSecondsElapsed] = useState(0);
   const timer = useRef<NodeJS.Timer | null>(null);
   const [isSolved, setIsSolved] = useState(false);
 
   useEffect(() => {
-    chrome.storage.sync.get(function (result) {
+    chrome.storage.sync.get(function (result: StorageObject) {
+      setData(result);
+
       const startDate = new Date(result['wt-start']);
       const endDate = result['wt-end']
         ? new Date(result['wt-end'])
@@ -57,22 +68,26 @@ export default function App() {
 
   return (
     <div className={`App ${isSolved ? 'App--solved' : null}`}>
-      <div className="App__section">
-        <div className="App__tile">{getHours(secondsElapsed)}</div>
+      <div className="App__title">#{data['wt-number']}</div>
 
-        <span className="App__label">Hours</span>
-      </div>
+      <div className="App__content">
+        <div className="App__section">
+          <div className="App__tile">{getHours(secondsElapsed)}</div>
 
-      <div className="App__section">
-        <div className="App__tile">{getMinutes(secondsElapsed)}</div>
+          <span className="App__label">Hours</span>
+        </div>
 
-        <span className="App__label">Minutes</span>
-      </div>
+        <div className="App__section">
+          <div className="App__tile">{getMinutes(secondsElapsed)}</div>
 
-      <div className="App__section">
-        <div className="App__tile">{getSeconds(secondsElapsed)}</div>
+          <span className="App__label">Minutes</span>
+        </div>
 
-        <span className="App__label">Seconds</span>
+        <div className="App__section">
+          <div className="App__tile">{getSeconds(secondsElapsed)}</div>
+
+          <span className="App__label">Seconds</span>
+        </div>
       </div>
     </div>
   );

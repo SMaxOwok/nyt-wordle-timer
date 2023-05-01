@@ -1,15 +1,21 @@
 #root {
-  height: 4.5rem;
   width: 17rem;
   padding: 5px;
 }
 
 .App {
   font-size: 2rem;
+  text-align: center;
+}
+
+.App__title {
+  margin-bottom: 1rem;
+}
+
+.App__content {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 5px;
-  text-align: center;
 }
 
 .App__tile {
