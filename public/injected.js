@@ -1,4 +1,4 @@
-const WORDLE_ENDPOINT = "https://www.nytimes.com/svc/wordle/v2";
+const WORDLE_ENDPOINT = 'https://www.nytimes.com/svc/wordle/v2';
 
 (function () {
   var XHR = XMLHttpRequest.prototype;
@@ -13,7 +13,7 @@ const WORDLE_ENDPOINT = "https://www.nytimes.com/svc/wordle/v2";
   };
 
   XHR.send = function () {
-    this.addEventListener("load", function () {
+    this.addEventListener('load', function () {
       const url = this._url ? this._url.toLowerCase() : this._url;
 
       if (!url) return;
@@ -21,11 +21,10 @@ const WORDLE_ENDPOINT = "https://www.nytimes.com/svc/wordle/v2";
 
       try {
         window.postMessage({
-          type: "SET_WORDLE_TIMER_DATA",
+          type: 'SET_WORDLE_TIMER_DATA',
           ...JSON.parse(this.responseText),
         });
       } catch (err) {
-        console.log("Error in responseType try catch");
         console.log(err);
       }
     });

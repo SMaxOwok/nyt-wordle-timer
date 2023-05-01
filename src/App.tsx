@@ -68,7 +68,7 @@ export default function App() {
 
   return (
     <div className={`App ${isSolved ? 'App--solved' : null}`}>
-      <div className="App__title">#{data['wt-number']}</div>
+      <div className="App__title">No. {data['wt-number']}</div>
 
       <div className="App__content">
         <div className="App__section">
