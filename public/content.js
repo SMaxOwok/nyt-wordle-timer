@@ -32,22 +32,6 @@ window.addEventListener(
   false,
 );
 
-const handleFinish = (mutations) => {
-  if (!mutations[0].addedNodes.length) return;
-
-  chrome.storage.sync.get(['wt-end']).then((result) => {
-    if (!!result['wt-end']) return;
-
-    chrome.storage.sync.set({
-      'wt-end': new Date().toLocaleString(),
-    });
-
-    chrome.runtime.sendMessage(chrome.runtime.id, {
-      type: 'FINISHED',
-    });
-  });
-};
-
 const waitForAddedNode = ({ selector, onComplete }) => {
   new MutationObserver(function () {
     const node = document.querySelector(selector);
@@ -64,10 +48,70 @@ const waitForAddedNode = ({ selector, onComplete }) => {
   });
 };
 
-const observer = new MutationObserver(handleFinish);
+const getHours = (seconds) =>
+  Math.floor(seconds / 60 / 60)
+    .toString()
+    .padStart(2, '0');
+const getMinutes = (seconds) =>
+  Math.floor((seconds / 60) % 60)
+    .toString()
+    .padStart(2, '0');
+const getSeconds = (seconds) =>
+  Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+
+const handleFinish = (mutations) => {
+  if (!mutations[0].addedNodes.length) return;
+
+  chrome.storage.sync.get(['wt-end']).then((result) => {
+    if (!!result['wt-end']) return;
+
+    chrome.storage.sync.set({
+      'wt-end': new Date().toLocaleString(),
+    });
+
+    chrome.runtime.sendMessage(chrome.runtime.id, {
+      type: 'FINISHED',
+    });
+  });
+};
+
+const handleShareButtonVisible = (button) => {
+  if (!button) return;
+
+  button.addEventListener('click', () => {
+    chrome.storage.sync.get(['wt-start', 'wt-end']).then((result) => {
+      const delta =
+        Math.abs(
+          new Date(result['wt-end']).valueOf() -
+            new Date(result['wt-start']).valueOf(),
+        ) / 1000;
+      const time = `${getHours(delta)}:${getMinutes(delta)}:${getSeconds(
+        delta,
+      )}`;
+
+      setTimeout(() => {
+        navigator.clipboard.readText().then((text) => {
+          const adjusted = `${text}\n\nFinished in ${time}`;
+
+          navigator.clipboard.writeText(adjusted);
+        });
+      }, 500);
+    });
+  });
+};
 
 waitForAddedNode({
   selector: 'div[id*=gameToaster]',
   onComplete: (node) =>
-    observer.observe(node, { childList: true, subtree: true }),
+    new MutationObserver(handleFinish).observe(node, {
+      childList: true,
+      subtree: true,
+    }),
+});
+
+waitForAddedNode({
+  selector: 'svg[data-testid=icon-share]',
+  onComplete: (node) => handleShareButtonVisible(node.closest('button')),
 });
